@@ -141,7 +141,7 @@ public class samplebill {
     	ResultSet rs=stmt.executeQuery(Query);
     	
     	while(rs.next()) {
-    		String ID= Integer.toString(rs.getInt("id"));
+    		
     		String AcNo=rs.getString("acno");
     		String Year=rs.getString("year");
     		String month=rs.getString("month");

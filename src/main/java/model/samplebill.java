@@ -13,7 +13,8 @@ import java.sql.Statement;
 
 public class samplebill {
 	
-	String msg="hi";
+	String Msg="hi";
+	
 	public samplebill() {
 	
 	}

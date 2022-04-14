@@ -58,6 +58,26 @@ public class BillService {
 
 
 	
-	
+	@PUT
+	@Path("/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String updateItems(String itemData) {
+		
+		//Convert the input string to a JSON object 
+		 JsonObject itemUpdateObject = new JsonParser().parse(itemData).getAsJsonObject();
+		 
+		//Read the values from the JSON object
+		 String ID = itemUpdateObject.get("id").getAsString(); 
+		 String category= itemUpdateObject.get("category").getAsString(); 
+		 String AcNo = itemUpdateObject.get("acno").getAsString(); 
+		 String Year = itemUpdateObject.get("year").getAsString(); 
+		 String month = itemUpdateObject.get("month").getAsString(); 
+		 String totalunits = itemUpdateObject.get("totalunits").getAsString();
+		 String fixedCharge = itemUpdateObject.get("fixedcharge").getAsString();
+		 
+		String output= billObject.updateBill(ID, category, AcNo, Year, month, totalunits, fixedCharge);
+		return output;
+	}
 
 }

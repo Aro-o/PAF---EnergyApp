@@ -7,6 +7,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 
 
 
@@ -104,7 +113,7 @@ public class samplebill {
 			output="inserted";
 			con.close();
 			
-		} catch (SQLException e) {
+		} catch (SQLException e ) {
 			output="not inserted retry and give proper values";
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -141,7 +150,7 @@ public class samplebill {
     	ResultSet rs=stmt.executeQuery(Query);
     	
     	while(rs.next()) {
-    		
+    		Integer id=rs.getInt("id");
     		String AcNo=rs.getString("acno");
     		String Year=rs.getString("year");
     		String month=rs.getString("month");
@@ -156,7 +165,7 @@ public class samplebill {
     	    
     		
     		out+="<td><form action='billUpdate.jsp' method='post'>"
-    				
+    				+ "<input type='hidden'   name='id' value='"+ id +"' >"
     				+ "<input type='hidden'   name='acno' value='"+ AcNo +"' >"
     				+ "<input type='hidden'   name='year' value='"+ Year +"'>"
     				+ "<input type='hidden'   name='month' value='"+month +"'>"
@@ -165,7 +174,10 @@ public class samplebill {
     			    + "<input type='submit' name='update' value='update'></td>"
     				
     				+ "<td><form action='bill.jsp' method='post'>"
-    				+ "<input type='hidden'   name='ID' value='"+ ID +"' > "
+    				
+    				+ "<input type='hidden'   name='acno' value='"+ AcNo +"' > "
+    				+ "<input type='hidden'   name='year' value='"+ Year +"' > "
+    				+ "<input type='hidden'   name='month' value='"+ month +"' > "
     				+ "<input type='submit' value='delete' name='btnRemove'>"
     				+ "</form>"
     				+ "</td>"
@@ -234,15 +246,93 @@ public class samplebill {
  
   }
 	
+    public String updateBill(String ID,String category,String acno, String year, String month, String totalunits,String fixedcharge)
+    { 
+    	
+    String output="";
+    Connection con = null ;
+    try
+    { 
+      con = connect(); 
+      if (con == null) 
+      { 
+      return "Error while connecting to the database"; 
+      }
+
+      else {
+      	
+      	Double totalunitCharge=0.00;
+          Double total=0.00;
+          
+      	if(category.equals("religious")) {
+      		
+      	
+      	if(Double.parseDouble(totalunits)<60) {
+          	totalunitCharge=Double.parseDouble(totalunits)* 4.00;
+          	total=totalunitCharge+Double.parseDouble(fixedcharge);
+      	}else if(Double.parseDouble(totalunits)<120) {
+      		totalunitCharge=60 * 4.00 +(Double.parseDouble(totalunits)-60)* 10.00;
+      	}else if(Double.parseDouble(totalunits)>120){
+      		totalunitCharge=(60 * 4.00) + (60 * 10.00) +(Double.parseDouble(totalunits)-120)* 12.00;
+      	}else {
+      		System.out.print("enter a valid number of unit");
+      	}
+      	
+      	
+          
+      	}else {
+      		
+      		if(Double.parseDouble(totalunits)<60) {
+              	totalunitCharge=Double.parseDouble(totalunits)* 6.00;
+              	
+      		}else if(Double.parseDouble(totalunits)<120) {
+      			totalunitCharge=60 * 6.00 +(Double.parseDouble(totalunits)-60)* 12.00;
+      		}else if(Double.parseDouble(totalunits)>120){
+      			totalunitCharge=(60 * 6.00) + (60 * 12.00) +(Double.parseDouble(totalunits)-120)* 14.00;
+      		}else {
+      			System.out.print("enter a valid number of unit");
+      		}
+      		
+      		
+      	}
+      	
+   
+    total=totalunitCharge+Double.parseDouble(fixedcharge);
+    
+    String query="Update samplebill set acno=?,year=?,month=?,totalunits=?,totalunitcharge=?,fixedcharge=?,total=? Where ID=?";
+    PreparedStatement ps =con.prepareStatement(query);
+    ps.setString(1, acno);
+	ps.setString(2, year);
+	ps.setString(3, month);
+	ps.setDouble(4,Double.parseDouble(totalunits));
+	ps.setDouble(5,totalunitCharge);
+	ps.setDouble(6,Double.parseDouble(fixedcharge));
+	ps.setDouble(7,total);
+	ps.setInt(8,Integer.parseInt(ID));
+	
+    ps.execute();
+    output ="update success";
+    con.close();
+    
+     }}catch(Exception e){
+    	System.out.println("failed id:"+ID);
+        output = "error during update"; 
+    System.err.println(e.getMessage());
+    }
+    
+    return output;	
+    	
+    }
+    
+    
+    
+ }
+	
+	
+
 	
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-}
+

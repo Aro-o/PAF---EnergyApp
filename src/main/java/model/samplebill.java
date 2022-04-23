@@ -7,6 +7,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 
 
 
@@ -41,9 +50,10 @@ public class samplebill {
 	
 	}
 	
-	public String insertBill(String category,String acno, String year, String month, String totalunits,String fixedcharge) {
+	public String insertBill(String category,String acno, String year, String month, String totalunits) {
 		Connection con = connect(); 
-		String output;
+		Double FixedCharge=0.00;
+		String output = "no";
 		if (con == null) 
 		{ 
 		return "Error while connecting to the database"; 
@@ -56,10 +66,10 @@ public class samplebill {
             
 			if(category.equals("religious")) {
 				
-			
+			FixedCharge=240.00;
 			if(Double.parseDouble(totalunits)<60) {
             	totalunitCharge=Double.parseDouble(totalunits)* 4.00;
-            	total=totalunitCharge+Double.parseDouble(fixedcharge);
+            	//total=totalunitCharge+Double.parseDouble(fixedcharge);
 			}else if(Double.parseDouble(totalunits)<120) {
 				totalunitCharge=60 * 4.00 +(Double.parseDouble(totalunits)-60)* 10.00;
 			}else if(Double.parseDouble(totalunits)>120){
@@ -69,7 +79,7 @@ public class samplebill {
 			}
             
 			}else {
-				
+				FixedCharge=540.00;
 				if(Double.parseDouble(totalunits)<60) {
 	            	totalunitCharge=Double.parseDouble(totalunits)* 6.00;
 	            	
@@ -80,39 +90,66 @@ public class samplebill {
 				}else {
 					System.out.print("enter a valid number of unit");
 				}
-				total=totalunitCharge+Double.parseDouble(fixedcharge);
+				
 			}
-			
-			
-			
-			String query="insert into samplebill(id,acno,year,month,totalunits,totalunitcharge,fixedcharge,total) values(?,?,?,?,?,?,?,?)";
-		   try {
-			PreparedStatement ps=con.prepareStatement(query);
-            
-			
-			ps.setInt(1, 0);
-			ps.setString(2, acno);
-			ps.setString(3, year);
-			ps.setString(4, month);
-			ps.setDouble(5,Double.parseDouble(totalunits));
-			ps.setDouble(6,totalunitCharge);
-			ps.setDouble(7,Double.parseDouble(fixedcharge));
-			ps.setDouble(8,total);
+			total=totalunitCharge+FixedCharge;
 
+			String Query="select * from samplebill";
+	    	try {
+	    		Statement stmt=con.createStatement();
+		    	
+	    	
+	    	    ResultSet rs=stmt.executeQuery(Query);
+	    	
+	    	while(rs.next()) {
+	    		
+	    		String AcNoCheck=rs.getString("acno");
+	    		String YearCheck=rs.getString("years");
+	    		String monthCheck=rs.getString("months");
+	    		
+	    	   
+				if(AcNoCheck.equals(acno) && YearCheck.equals(year) && monthCheck.equals(month) ) {
+					output="alreadyAvailable";
+					break;
+				}
+				
+				
+				//output="already available so failed";
+			}
+	    	}catch(Exception e) {
+				System.out.println(e.getMessage());
+			}
+			if(!output.equals("alreadyAvailable")) {
 			
-			ps.execute();
-			output="inserted";
-			con.close();
-			
-		} catch (SQLException e) {
-			output="not inserted retry and give proper values";
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+					String query="insert into samplebill(id,acno,years,months,totalunits,totalunitcharge,fixedcharge,total) values(?,?,?,?,?,?,?,?)";
+				   try {
+					PreparedStatement ps=con.prepareStatement(query);
+					
+					
+					ps.setInt(1, 0);
+					ps.setString(2, acno);
+					ps.setString(3, year);
+					ps.setString(4, month);
+					ps.setDouble(5,Double.parseDouble(totalunits));
+					ps.setDouble(6,totalunitCharge);
+					ps.setDouble(7,FixedCharge);
+					ps.setDouble(8,total);
+		
+					
+					ps.execute();
+					output="inserted";
+					con.close();
+					
+				    } catch (SQLException e ) {
+					output="not inserted retry and give proper values";
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		   return output;
 		     
-		
-		}
+			
+		}	
 		
 	}
 	
@@ -133,7 +170,7 @@ public class samplebill {
     	
     	out="<table border='1'>"
     			+ "<tr>"
-    			+ "<th>AC No</th><th>Year</th><th>Month</th><th>total units</th><th>total units charge</th><th>fixed charge</th><th>total</th><th>Update</th><th>delete</th>"
+    			+ "<th>ID No</th><th>AC No</th><th>Year</th><th>Month</th><th>total units</th><th>total units charge</th><th>fixed charge</th><th>total</th><th>Update</th><th>delete</th>"
     			+ "</tr>";
     	
     	Statement stmt=con.createStatement();
@@ -141,10 +178,10 @@ public class samplebill {
     	ResultSet rs=stmt.executeQuery(Query);
     	
     	while(rs.next()) {
-    		
+    		Integer id=rs.getInt("id");
     		String AcNo=rs.getString("acno");
-    		String Year=rs.getString("year");
-    		String month=rs.getString("month");
+    		String Year=rs.getString("years");
+    		String month=rs.getString("months");
     		String totalunits=Double.toString(rs.getDouble("totalunits"));
     		String totalunitCharge=Double.toString(rs.getDouble("totalunitcharge"));
     		String fixedcharge=Double.toString(rs.getDouble("fixedcharge"));
@@ -152,11 +189,11 @@ public class samplebill {
     	   
     	    
     	    out+="<tr>"
-    	    		+ "<td>"+ AcNo + "</td><td>"+Year +"</td><td>"+month+"</td><td>"+totalunits+"</td><td>"+totalunitCharge+"</td><td>"+fixedcharge+"</td><td>"+total+"</td>";
+    	    		+ "<td>"+ id + "</td><td>"+ AcNo + "</td><td>"+Year +"</td><td>"+month+"</td><td>"+totalunits+"</td><td>"+totalunitCharge+"</td><td>"+fixedcharge+"</td><td>"+total+"</td>";
     	    
     		
     		out+="<td><form action='billUpdate.jsp' method='post'>"
-    				
+    				+ "<input type='hidden'   name='id' value='"+ id +"' >"
     				+ "<input type='hidden'   name='acno' value='"+ AcNo +"' >"
     				+ "<input type='hidden'   name='year' value='"+ Year +"'>"
     				+ "<input type='hidden'   name='month' value='"+month +"'>"
@@ -165,7 +202,11 @@ public class samplebill {
     			    + "<input type='submit' name='update' value='update'></td>"
     				
     				+ "<td><form action='bill.jsp' method='post'>"
-    				+ "<input type='hidden'   name='ID' value='"+ ID +"' > "
+    				
+                    + "<input type='hidden'   name='id' value='"+ id +"' > "
+    				+ "<input type='hidden'   name='acno' value='"+ AcNo +"' > "
+    				+ "<input type='hidden'   name='year' value='"+ Year +"' > "
+    				+ "<input type='hidden'   name='month' value='"+ month +"' > "
     				+ "<input type='submit' value='delete' name='btnRemove'>"
     				+ "</form>"
     				+ "</td>"
@@ -211,7 +252,7 @@ public class samplebill {
 	 
 	 
 	 
-	 String query="delete from samplebill where acno=? and year=? and month=? ";
+	 String query="delete from samplebill where acno=? and years=? and months=? ";
 	 try {
 		PreparedStatement ps=connect().prepareStatement(query);
 		ps.setString(1, acno);
@@ -234,15 +275,174 @@ public class samplebill {
  
   }
 	
+    public String updateBill(String ID,String category,String acno, String year, String month, String totalunits)
+    { 
+    Double Fixed=0.00;	
+    String output="";
+    Connection con = null ;
+    try
+    { 
+         con = connect(); 
+      if (con == null) { 
+    	  	return "Error while connecting to the database"; 
+         } else {
+    	  
+      	
+		      	      Double totalunitCharge=0.00;
+		              Double total=0.00;
+			          if(category.equals("religious")) {
+			      		
+			      		         Fixed=240.00;
+					      	if(Double.parseDouble(totalunits)<60) {
+					          	        totalunitCharge=Double.parseDouble(totalunits)* 4.00;
+					             }else if(Double.parseDouble(totalunits)<120) {
+					      		                    totalunitCharge=60 * 4.00 +(Double.parseDouble(totalunits)-60)* 10.00;
+					               	}     else if(Double.parseDouble(totalunits)>120){
+					      		                          totalunitCharge=(60 * 4.00) + (60 * 10.00) +(Double.parseDouble(totalunits)-120)* 12.00;
+					                   	}        else {
+					      		                              System.out.print("enter a valid number of unit");
+					      	                        }
+	      	          }else {
+      		                     Fixed=540.00;
+                              if(Double.parseDouble(totalunits)<60) {
+		              	                totalunitCharge=Double.parseDouble(totalunits)* 6.00;
+		                         }else if(Double.parseDouble(totalunits)<120) {
+		      			                totalunitCharge=60 * 6.00 +(Double.parseDouble(totalunits)-60)* 12.00;
+		      		              }      else if(Double.parseDouble(totalunits)>120){
+		      			                              totalunitCharge=(60 * 6.00) + (60 * 12.00) +(Double.parseDouble(totalunits)-120)* 14.00;
+		      		                   }    else {
+		      			                                   System.out.print("enter a valid number of unit");
+		      		                           }
+      		
+      		
+      	                  }
+      	
+   
+    total=totalunitCharge+Fixed;
+    
+    String query="Update samplebill set acno=?,years=?,months=?,totalunits=?,totalunitcharge=?,fixedcharge=?,total=? Where ID=?";
+    PreparedStatement ps =con.prepareStatement(query);
+    ps.setString(1, acno);
+	ps.setString(2, year);
+	ps.setString(3, month);
+	ps.setDouble(4,Double.parseDouble(totalunits));
+	ps.setDouble(5,totalunitCharge);
+	ps.setDouble(6,Fixed);
+	ps.setDouble(7,total);
+	ps.setInt(8,Integer.parseInt(ID));
+	
+    ps.execute();
+    output ="update success";
+    con.close();
+    
+     }}catch(Exception e){
+		    	System.out.println("failed id:"+ID);
+		        output = "error during update"; 
+		         System.err.println(e.getMessage());
+    }
+    
+    return output;	
+    	
+    }
+    
+    
+    public String SearchBill(String acno,String year,String month)
+    { 
+	 String output = ""; 
+	 Connection con = null ;
+	 try
+	 { 
+	   con = connect(); 
+	 if (con == null) { 
+	  return "Error while connecting to the database for deleting."; 
+	  } 
+	 } 
+	 catch (Exception e) 
+	 { 
+	 output = "Error while search the Bill."; 
+	  System.err.println(e.getMessage()); 
+	 }
+	 
+	 output="<table border='1'>"
+	  			+ "<tr>"
+	  			+ "<th>ID No</th><th>AC No</th><th>Year</th><th>Month</th><th>total units</th><th>total units charge</th><th>fixed charge</th><th>total</th><th>Update</th><th>delete</th>"
+	  			+ "</tr>";
+	 
+	 String Query="select * from samplebill";
+ 	try {
+ 		Statement stmt=con.createStatement();
+	    	
+ 	
+ 	    ResultSet rs=stmt.executeQuery(Query);
+ 	
+ 	while(rs.next()) {
+ 		Integer id=rs.getInt("id");
+ 		String AcNoCheck=rs.getString("acno");
+ 		String YearCheck=rs.getString("years");
+ 		String monthCheck=rs.getString("months");
+ 		String totalunits=Double.toString(rs.getDouble("totalunits"));
+		String totalunitCharge=Double.toString(rs.getDouble("totalunitcharge"));
+		String fixedcharge=Double.toString(rs.getDouble("fixedcharge"));
+		String total=Double.toString(rs.getDouble("total"));
+ 	   
+			if(AcNoCheck.equals(acno) && YearCheck.equals(year) && monthCheck.equals(month) ) {
+				Integer id2=id;
+				String AcNo2=AcNoCheck;
+	    		String Year2=YearCheck;
+	    		String month2=monthCheck;
+	    		String totalunits2=totalunits;
+	    		String totalunitCharge2=totalunitCharge;
+	    		String fixedcharge2=fixedcharge;
+	    		String total2=total;
+	    		
+	    		 
+	    	    output+="<tr>"
+	    	    		+ "<td>"+ id2 + "</td><td>"+ AcNo2 + "</td><td>"+Year2 +"</td><td>"+month2+"</td><td>"+totalunits2+"</td><td>"+totalunitCharge2+"</td><td>"+fixedcharge2+"</td><td>"+total2+"</td>";
+	    	    
+	    		
+	    		output+="<td><form action='billUpdate.jsp' method='post'>"
+	    				+ "<input type='hidden'   name='id' value='"+ id2 +"' >"
+	    				+ "<input type='hidden'   name='acno' value='"+ AcNo2 +"' >"
+	    				+ "<input type='hidden'   name='year' value='"+ Year2 +"'>"
+	    				+ "<input type='hidden'   name='month' value='"+month2 +"'>"
+	    			    + "<input type='hidden'   name='month' value='"+totalunits2 +"'>"
+	    			    + "<input type='hidden'   name='month' value='"+fixedcharge2 +"'>"
+	    			    + "<input type='submit' name='update' value='update'></td>"
+	    				
+	    				+ "<td><form action='bill.jsp' method='post'>"
+	    				
+	                    + "<input type='hidden'   name='id' value='"+ id2 +"' > "
+	    				+ "<input type='hidden'   name='acno' value='"+ AcNo2 +"' > "
+	    				+ "<input type='hidden'   name='year' value='"+ Year2 +"' > "
+	    				+ "<input type='hidden'   name='month' value='"+ month2 +"' > "
+	    				+ "<input type='submit' value='delete' name='btnRemove'>"
+	    				+ "</form>"
+	    				+ "</td>"
+	    				+ "</tr>";
+	    		
+	    	}
+			
+			
+			//output="already available so failed";
+		}
+ 	}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+	 
+	 return output;
+	 
+ 
+ 
+  }
+    
+    
+ }
+	
+	
+
 	
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-}
+

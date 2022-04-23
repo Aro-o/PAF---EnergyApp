@@ -3,7 +3,11 @@ package com;
 import javax.ws.rs.*; 
 import javax.ws.rs.core.MediaType; 
 //For JSON
-import com.google.gson.*; 
+import com.google.gson.*;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+
 //For XML
 import org.jsoup.*; 
 import org.jsoup.parser.*; 
@@ -14,6 +18,15 @@ import model.samplebill;
 @Path("/bill") 
 public class BillService {
 	samplebill billObject=new samplebill();
+	
+	
+	public String resource() {
+		Client c = Client.create();
+		WebResource resource = c.resource("");
+		String output = resource.get(String.class);
+		return "From server-service: "+ output;	
+	}
+	
 	
 	@GET
 	@Path("/readBill") 
@@ -31,16 +44,15 @@ public class BillService {
 	 @FormParam("acno") String acno, 
 	 @FormParam("year") String year, 
 	 @FormParam("month") String month, 
-	 @FormParam("totalunits") String totalunits,
-	 @FormParam("fixedcharge") String fixedcharge) 
+	 @FormParam("totalunits") String totalunits) 
 	{ 
-	 String output = billObject.insertBill(category, acno, year, month, totalunits, fixedcharge);
+	 String output = billObject.insertBill(category, acno, year, month, totalunits);
 	return output; 
 	}
 
 
 	@DELETE
-	@Path("/delete")
+	@Path("/")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_XML)
 	public String deleteBill(String itemData) {
@@ -59,7 +71,7 @@ public class BillService {
 
 	
 	@PUT
-	@Path("/update")
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String updateItems(String itemData) {
@@ -74,9 +86,33 @@ public class BillService {
 		 String Year = itemUpdateObject.get("year").getAsString(); 
 		 String month = itemUpdateObject.get("month").getAsString(); 
 		 String totalunits = itemUpdateObject.get("totalunits").getAsString();
-		 String fixedCharge = itemUpdateObject.get("fixedcharge").getAsString();
 		 
-		String output= billObject.updateBill(ID, category, AcNo, Year, month, totalunits, fixedCharge);
+		 
+		String output= billObject.updateBill(ID, category, AcNo, Year, month, totalunits);
+		return output;
+	}
+	
+	
+	
+	
+	@GET
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String searchItems(String itemData) {
+		
+		//Convert the input string to a JSON object 
+		 JsonObject itemUpdateObject = new JsonParser().parse(itemData).getAsJsonObject();
+		 
+		//Read the values from the JSON object
+		
+		 String AcNo = itemUpdateObject.get("acno").getAsString(); 
+		 String Year = itemUpdateObject.get("year").getAsString(); 
+		 String month = itemUpdateObject.get("month").getAsString(); 
+		
+		 
+		 
+		String output= billObject.SearchBill(AcNo, Year, month);
 		return output;
 	}
 

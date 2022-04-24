@@ -65,7 +65,7 @@ public class CustomerFeedback {
 				
 				//execute the statement
 				ps.execute();
-				output="inserted";
+				output="Data inserted successfully";
 				con.close();
 				
 			} catch (SQLException e) {
@@ -149,7 +149,7 @@ public class CustomerFeedback {
 	    	} 
 	    	catch (Exception e) 
 	    	{ 
-	    	 out = "Error while reading the items."; 
+	    	 out = "Error while reading the feedback."; 
 	    	 System.err.println(e.getMessage()); 
 	    	}
 	    	
@@ -184,7 +184,7 @@ public class CustomerFeedback {
 			PreparedStatement ps=connect().prepareStatement(query);
 			ps.setInt(1, Integer.parseInt(feedbackID));
 			ps.execute();
-			output="deleted success";
+			output="Successfully Deleted";
 			con.close(); 
 			
 		} catch (SQLException e) {
@@ -224,7 +224,7 @@ public class CustomerFeedback {
 	    ps.setInt(4,Integer.parseInt(feedbackID)); 
 	    
 	    ps.execute();
-	    output ="update success";
+	    output ="updated successfully";
 	    con.close();
 	    
 	    }catch(Exception e){

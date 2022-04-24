@@ -44,9 +44,10 @@ public class BillService {
 	 @FormParam("acno") String acno, 
 	 @FormParam("year") String year, 
 	 @FormParam("month") String month, 
-	 @FormParam("totalunits") String totalunits) 
+	 @FormParam("totalunits") String totalunits,
+	 @FormParam("due") String due) 
 	{ 
-	 String output = billObject.insertBill(category, acno, year, month, totalunits);
+	 String output = billObject.insertBill(category, acno, year, month, totalunits,due);
 	return output; 
 	}
 
@@ -86,9 +87,9 @@ public class BillService {
 		 String Year = itemUpdateObject.get("year").getAsString(); 
 		 String month = itemUpdateObject.get("month").getAsString(); 
 		 String totalunits = itemUpdateObject.get("totalunits").getAsString();
+		 String due = itemUpdateObject.get("due").getAsString();
 		 
-		 
-		String output= billObject.updateBill(ID, category, AcNo, Year, month, totalunits);
+		String output= billObject.updateBill(ID, category, AcNo, Year, month, totalunits,due);
 		return output;
 	}
 	

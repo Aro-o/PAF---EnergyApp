@@ -11,7 +11,19 @@
 </head>
 <body>
 
-	<jsp:include page="Header.jsp" />
+	<header>
+		<nav class="navbar navbar-expand-md navbar-dark"
+			style="background-color: maroon">
+			<div>
+				<a href="" class="navbar-brand"> Power Grid System </a>
+			</div>
+
+			<ul class="navbar-nav">
+				<li><a href="<%=request.getContextPath()%>/list"
+					class="nav-link">Notices</a></li>
+			</ul>
+		</nav>
+	</header>
 	<br>
 
 	<div class="row">
@@ -39,17 +51,17 @@
 				</thead>
 				<tbody>
 				
-					<c:forEach var="notices" items="${listNotice}">
+					<c:forEach var="notice" items="${listNotice}">
 
 						<tr>
-							<td><c:out value="${notices.id}" /></td>
-							<td><c:out value="${notices.Topic}" /></td>
-							<td><c:out value="${notices.areasAffected}" /></td>
-							<td><c:out value="${notices.Date}" /></td>
-							<td><c:out value="${notices.Details}" /></td>
-							<td><a href="edit?id=<c:out value='${notices.id}' />">Edit</a>
+							<td><c:out value="${notice.id}" /></td>
+							<td><c:out value="${notice.topic}" /></td>
+							<td><c:out value="${notice.areasAffected}" /></td>
+							<td><c:out value="${notice.date}" /></td>
+							<td><c:out value="${notice.details}" /></td>
+							<td><a href="edit?id=<c:out value='${notice.id}' />">Edit</a>
 								&nbsp;&nbsp;&nbsp;&nbsp; <a
-								href="delete?id=<c:out value='${notices.id}' />">Delete</a></td>
+								href="delete?id=<c:out value='${notice.id}' />">Delete</a></td>
 						</tr>
 					</c:forEach>
 		

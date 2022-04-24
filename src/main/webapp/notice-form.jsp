@@ -11,56 +11,67 @@
 </head>
 <body>
 
-	<jsp:include page="Header.jsp" />
+	<header>
+		<nav class="navbar navbar-expand-md navbar-dark"
+			style="background-color: maroon">
+			<div>
+				<a href="" class="navbar-brand"> power Grid System </a>
+			</div>
+
+			<ul class="navbar-nav">
+				<li><a href="<%=request.getContextPath()%>/list"
+					class="nav-link">Notices</a></li>
+			</ul>
+		</nav>
 	</header>
 	<br>
 	<div class="container col-md-5">
 		<div class="card">
 			<div class="card-body">
-				<c:if test="${notices != null}">
+				<c:if test="${notice != null}">
 					<form action="update" method="post">
 				</c:if>
-				<c:if test="${notices == null}">
+				<c:if test="${notice == null}">
 					<form action="insert" method="post">
 				</c:if>
 
 				<caption>
 					<h2>
-						<c:if test="${notices != null}">
+						<c:if test="${notice != null}">
             			Edit Notice
             		</c:if>
-						<c:if test="${notices == null}">
+						<c:if test="${notice == null}">
             			Add New Notice
             		</c:if>
 					</h2>
 				</caption>
 
-				<c:if test="${notices != null}">
-					<input type="hidden" name="id" value="<c:out value='${notices.id}' />" />
+				<c:if test="${notice != null}">
+					<input type="hidden" name="id" value="<c:out value='${notice.id}' />" />
 				</c:if>
 
 				<fieldset class="form-group">
 					<label>Topic</label> <input type="text"
-						value="<c:out value='${notices.Topic}' />" class="form-control"
-						name="Topic" required="required">
+						value="<c:out value='${notice.topic}' />" class="form-control"
+						name="topic" required="required">
 				</fieldset>
 
 				<fieldset class="form-group">
 					<label>Areas Affected</label> <input type="text"
-						value="<c:out value='${notices.areasAffected}' />" class="form-control"
+						value="<c:out value='${notice.areasAffected}' />" class="form-control"
 						name="areasAffected">
 				</fieldset>
 
 				<fieldset class="form-group">
 					<label>Date</label> <input type="text"
-						value="<c:out value='${notices.Date}' />" class="form-control"
-						name="Date">
+						value="<c:out value='${notice.date}' />" class="form-control"
+						name="date">
 				</fieldset>
 				
 				<fieldset class="form-group">
 					<label>Details</label> <input type="text"
-						value="<c:out value='${notices.Details}' />" class="form-control"
-						name="Details">
+						value="<c:out value='${notice.details}' />" class="form-control"
+						name="details">
 				</fieldset>
 
 				<button type="submit" class="btn btn-success">Save</button>

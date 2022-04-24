@@ -35,7 +35,7 @@
 			
 			<ul class="navbar-nav">
 				<li><a href="<%=request.getContextPath()%>/list"
-					class="nav-link">Billpay</a></li>
+					class="nav-link">BillPay</a></li>
 			</ul>
 			
 			<ul class="navbar-nav">

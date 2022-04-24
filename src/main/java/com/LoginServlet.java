@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
             if (loginDao.validate(login)) {
                 //HttpSession session = request.getSession();
                 // session.setAttribute("username",username);
-                response.sendRedirect("notice-list.jsp");
+                response.sendRedirect("/PAF/");
             } else {
                 HttpSession session = request.getSession();
                 //session.setAttribute("user", username);

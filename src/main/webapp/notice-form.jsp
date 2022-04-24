@@ -79,5 +79,15 @@
 			</div>
 		</div>
 	</div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<div class="navbar navbar-expand-md navbar-dark navbar-fixed-bottom"
+			style="background-color: maroon">
+      <div class="container">
+        <p class="navbar-text">© PowerGridSystem</p>
+      </div>
+    </div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<jsp:include page="Login.jsp" />
 <html>
 <head>
 <title>Power Grid System</title>
@@ -15,9 +16,13 @@
 		<nav class="navbar navbar-expand-md navbar-dark"
 			style="background-color: maroon">
 			<div>
-				<a href="" class="navbar-brand"> Power Grid System </a>
+				<a href="" class="navbar-brand"> power Grid System </a>
 			</div>
 
+            <ul class="navbar-nav">
+				<button onclick="document.getElementById('id01').style.display='block'" style="width:auto; background-color:maroon;">Login</button>
+			</ul>
+			
 			<ul class="navbar-nav">
 				<li><a href="<%=request.getContextPath()%>/list"
 					class="nav-link">Notices</a></li>
@@ -25,7 +30,8 @@
 		</nav>
 	</header>
 	<br>
-
+            
+	<br>
 	<div class="row">
 		<!-- <div class="alert alert-success" *ngIf='message'>{{message}}</div> -->
 
@@ -70,5 +76,15 @@
 			</table>
 		</div>
 	</div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<div class="navbar navbar-expand-md navbar-dark navbar-fixed-bottom"
+			style="background-color: maroon">
+      <div class="container">
+        <p class="navbar-text">© PowerGridSystem</p>
+      </div>
+    </div>
 </body>
 </html>

@@ -3,7 +3,8 @@ package model;
 import java.sql.*;
 
 public class Card {
-
+	
+	//declare variables
 	int cardID;
 	String cardno;
 	String name;
@@ -11,7 +12,7 @@ public class Card {
 	String exDate;
 	
 	public Card() {
-		   
+		//constructor   
 	   }
 	
 	public Connection connect() 
@@ -37,6 +38,7 @@ public class Card {
 	
 	/////////////////////////////////////////////////////INSERT DATA/////////////////////////////////////////////////////////
 	public String insertCard(String cardno, String name, String cvv, String exDate) {
+		//check connection to db
 		Connection con = connect(); 
 		String output;
 		if (con == null) 
@@ -45,17 +47,19 @@ public class Card {
 		}
 		
 		else {
+			//insert data to the database
 			String query="insert into card_details(cardID,cardno,name,cvv,exDate) values(?,?,?,?,?)";
 		   try {
 			PreparedStatement ps=con.prepareStatement(query);
             
-			
+			// binding values
 			ps.setInt(1, 0);
 			ps.setString(2, cardno);
 			ps.setString(3, name);
 			ps.setString(4, cvv);
 			ps.setString(5, exDate);
 			
+			// execute the statement
 			ps.execute();
 			output="Card Details Successfully Inserted";
 			con.close();
@@ -65,6 +69,7 @@ public class Card {
 			
 			e.printStackTrace();
 		}
+		   //display output
 		   return output;
 		     
 		
@@ -80,6 +85,7 @@ public class Card {
     	
     	try
     	{ 
+    	//check connection to the database
     	 Connection con = connect(); 
     	if (con == null) 
     	 { 
@@ -91,11 +97,13 @@ public class Card {
     			+ "<th>Card No</th><th styles= 'font-color : white;' >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</th><th>Name</th>"
     			+ "</tr>";
     	try {
+    		//execute
     	Statement stmt=con.createStatement();
     	String Query="select * from card_details";
     	ResultSet rs=stmt.executeQuery(Query);
     	
     	while(rs.next()) {
+    		//get values
     		String cardID= Integer.toString(rs.getInt("cardID"));
     		String cardno=rs.getString("cardno");
     		String name=rs.getString("name");
@@ -138,7 +146,7 @@ public class Card {
     	} 
     	catch (Exception e) 
     	{ 
-    	 out = "Error while reading the items."; 
+    	 out = "Error while reading card details."; 
     	 System.err.println(e.getMessage()); 
     	}
     	
@@ -157,6 +165,7 @@ public class Card {
     Connection con = null ;
     try
     { 
+    	//check connection
       con = connect(); 
     if (con == null) { 
      return "Error while connecting to the database for update."; 
@@ -174,7 +183,7 @@ public class Card {
     ps.setInt(5,Integer.parseInt(cardID)); 
     
     ps.execute();
-    output ="update success";
+    output ="Card details updated successfully!";
     con.close();
     
     }catch(Exception e){
@@ -190,6 +199,7 @@ public class Card {
 	public String deleteCard(String cardID)
     { 
      String output = ""; 
+     //check connection
      Connection con = null ;
      try
      { 
@@ -208,6 +218,7 @@ public class Card {
      
      String query="delete from card_details where cardID=? ";
      try {
+    	 //execute
 		PreparedStatement ps=connect().prepareStatement(query);
 		ps.setInt(1, Integer.parseInt(cardID));
 		ps.execute();
@@ -215,7 +226,6 @@ public class Card {
 		con.close(); 
 		
 	} catch (SQLException e) {
-		// TODO Auto-generated catch block
 		output="delete has error";
 		e.printStackTrace();
 	}
